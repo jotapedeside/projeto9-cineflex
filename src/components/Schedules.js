@@ -5,59 +5,64 @@ import Rodape from "./Rodape";
 
 export default function Schedules({movieSchedule, setMovieSchedule}) {
   //const [movieSchedule, setMovieSchedule] = useState([]);
-  const {movieId} = useParams();
+  const {idFilme} = useParams();
 
   useEffect(()=>{
-    const req = axios.get(`https://mock-api.driven.com.br/api/v7/cineflex/movies/${movieId}/showtimes`);
+    const req = axios.get(`https://mock-api.driven.com.br/api/v7/cineflex/movies/${idFilme}/showtimes`);
 
     req.then(res => {
-      console.log(movieSchedule);
-      console.log(movieSchedule.days);
       setMovieSchedule(res.data);
-      console.log(movieSchedule);
-      console.log(movieSchedule.days);
     });
   }, []);
-
+  console.log(movieSchedule.days);
+  console.log(movieSchedule);
+  
   return(
+    movieSchedule.days && movieSchedule.days.length > 0 ?
     <div className="container">
       <div className="container-header">
         <h1>Selecione o horário</h1>
       </div>
-      <Schedule days={movieSchedule}/>
+      <Schedule days={movieSchedule.days}/>
       <Rodape movieSchedule={movieSchedule}/>
     </div>
+    :
+    <> </>
   )
 }
 
 function Schedule({days}){
-  if (days.length === 0) {
-    return <div>Loading...</div>;
-  } else {
-    console.log(days);
     return (
-      /*
-      <div className="catalogo">
-        {days.map((movie, index) => {
-          return (
-            <div className="poster" key={index}>
-              <Link to={`/sessoes/${movie.id}`}>
-                <img src={movie.posterURL} alt={movie.posterURL} />
-              </Link>
-            </div>
-          );})}
-      </div>*/
-      <>
-        <Time/>
-      </>
+      <div className="schedule">
+        {days.map((day, index) =>
+          <Date key={index} days={day}/>
+        )}
+      </div>
     )
-  }
+  
 }
 
-function Time(){
+function Date({days}){
   return(
-    <>
-      <p> Test</p>
-    </>
+    <div className="date-cont">
+      <div className="date">
+        <h1> {days.weekday} - {days.date} </h1>
+      </div>
+      <div className="timelist">
+        {days.showtimes.map((time, index) =>
+          <Time key={index} times={time}/>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function Time({times}){
+  return(
+    <div className="time">
+      <Link to={`/assentos/${times.id}`} >
+        <p> {times.name} </p>
+      </Link>
+    </div>
   )
 }

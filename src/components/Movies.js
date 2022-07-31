@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 
-
 export default function Movies({movieList}) {
-  console.log(movieList);
   return(
     <div className="container">
       <div className="container-header">
@@ -18,7 +16,6 @@ function Movie({movieList}) {
       //TODO: Fazer um troço mais bonito
       return <div>Loading...</div>;
     } else {
-      console.log(movieList);
       return (
         <div className="catalogo">
           {movieList.map((movie, index) => {
