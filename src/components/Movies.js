@@ -15,7 +15,6 @@ export default function Movies({movieList}) {
 
 function Movie({movieList}) {
     if (movieList.length === 0) {
-      console.log(movieList);
       //TODO: Fazer um troço mais bonito
       return <div>Loading...</div>;
     } else {
@@ -23,13 +22,9 @@ function Movie({movieList}) {
       return (
         <div className="catalogo">
           {movieList.map((movie, index) => {
-            console.log(movieList);
-            console.log(movie.posterURL);
-            console.log(movie.id);
-            console.log(movie.title);
             return (
               <div className="poster" key={index}>
-                <Link to={`/movie/${movie.id}`}>
+                <Link to={`/sessoes/${movie.id}`}>
                   <img src={movie.posterURL} alt={movie.posterURL} />
                 </Link>
               </div>

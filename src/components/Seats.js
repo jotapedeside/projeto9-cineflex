@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 
-export default function Schedule() {
+export default function Seats() {
   return(
     <div className="container">
       <div className="container-header">
-        <h1>Selecione o horário</h1>
+        <h1>Selecione os assentos</h1>
       </div>
     </div>
   )
