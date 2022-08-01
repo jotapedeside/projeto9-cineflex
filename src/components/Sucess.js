@@ -1,5 +1,6 @@
 import {useLocation} from 'react-router-dom';
 import styled from "styled-components"
+import { Link } from 'react-router-dom';
 
 export default function Sucess(){
   const location = useLocation();
@@ -25,7 +26,9 @@ export default function Sucess(){
         <p> Nome: {location.state.objToPost.name} </p>
         <p> CPF: {location.state.objToPost.cpf}  </p>
       </InfoContainer>
-      <button> POW POW</button>
+      <Link to={'/'}>
+        <button> Voltar pra Home</button>
+      </Link>
     </SuccessBody>
   )
 }
@@ -49,6 +52,17 @@ const SuccessBody = styled.div`
   align-items: center;
   letter-spacing: 0.04em;
   line-height: 28px;
+
+  button{
+    margin: 57px 0;
+    width: 225px;
+    height: 42px;
+    border-radius: 3px;
+    color: #ffffff;
+    background: #E8833A;
+    border: none;
+    cursor: pointer;
+  }
 `
 const SuccessTitle = styled.div`
   width: 100%;

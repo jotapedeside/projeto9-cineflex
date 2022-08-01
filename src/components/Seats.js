@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Rodape from "./Rodape";
 
@@ -27,6 +27,7 @@ export default function Seats() {
         sessionSeats={sessionSeats.seats}
         selectedSeats={selectedSeats}
         setSelectedSeats={setSelectedSeats}/>
+      <SessionSeatsInfo/>
       <ClientInfo
         selectedSeats={selectedSeats}
         setSelectedSeats={setSelectedSeats}
@@ -107,6 +108,7 @@ function ClientInfo({selectedSeats, setSelectedSeats, idSessao, name, setName, c
   //verificar se o nome e cpf estão preenchidos e se o cpf é valido (11 digitos) e se o nome tem pelo menos 2 letras
   const ids = selectedSeats.map(i => Number(i));
   let navigate = useNavigate();
+  const regCPF = /^\d{11}$/;
 
   function Submit(event) {
     event.preventDefault();
@@ -120,7 +122,7 @@ function ClientInfo({selectedSeats, setSelectedSeats, idSessao, name, setName, c
         name: name,
         cpf: cpf
       }
-      console.log(objToPost);
+      //console.log(objToPost);
 
       const req = axios.post(`https://mock-api.driven.com.br/api/v7/cineflex/seats/book-many`, {
         ids: selectedSeats,
@@ -140,8 +142,7 @@ function ClientInfo({selectedSeats, setSelectedSeats, idSessao, name, setName, c
   }
 
   function validateForm() {
-    console.log("Validando");
-    return name.length > 1 && cpf.length === 11;
+    return name.length > 1 && regCPF.test(cpf) && selectedSeats.length > 0;
   }
 
   return (
@@ -154,6 +155,25 @@ function ClientInfo({selectedSeats, setSelectedSeats, idSessao, name, setName, c
       </FormInfo>
       <button type="submit" onClick={Submit}>Reservar assento(s)</button>
     </FormStyle>
+  )
+}
+
+function SessionSeatsInfo(){
+  return(
+    <SeatsInfo>
+      <div className="example-div">
+        <div className="seat-example selected"/>
+        <p>Selecionado</p>
+      </div>
+      <div className="example-div">
+        <div className="seat-example available"/>
+        <p>Disponível</p>
+      </div>
+      <div className="example-div">
+        <div className="seat-example unavailable"/>
+        <p>Indisponível</p>
+      </div>
+    </SeatsInfo>
   )
 }
 
@@ -217,5 +237,47 @@ const FormInfo = styled.div`
     margin-bottom: 10px;
     border: 1px solid #D5D5D5;
     border-radius: 3px;
+  }
+`
+
+const SeatsInfo = styled.div`
+  display: flex;
+  justify-content: space-around;
+
+  .example-div{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  p{
+    height: 28px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: -0.013em;
+    color: #4E5A65;
+  }
+
+  .seat-example{
+    width: 26px;
+    height: 26px;
+    border-radius: 12px;
+  }
+  
+  .selected{
+    background: #8DD7CF;
+    border: 1px solid #1AAE9E;
+  }
+
+  .available{
+    background: #C3CFD9;
+    border: 1px solid #7B8B99;
+  }
+
+  .unavailable{
+    background: #FBE192;
+    border: 1px solid #F7C52B;  
   }
 `
