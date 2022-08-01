@@ -5,6 +5,7 @@ import Header from "./Header.js";
 import Movies from "./Movies.js";
 import Schedules from "./Schedules.js";
 import Seats from "./Seats.js";
+import Sucess from "./Sucess.js";
 
 export default function App() {
   const [movieList, setMovieList] = useState([]);
@@ -24,6 +25,8 @@ export default function App() {
         <Route path="/" element={<Movies movieList={movieList}/>} />
         <Route path="/sessoes/:idFilme" element={<Schedules movieSchedule={movieSchedule} setMovieSchedule={setMovieSchedule}/>} />
         <Route path="/assentos/:idSessao" element={<Seats/>} />
+        <Route path="/sucesso" element={
+                    <Sucess/>}/>
       </Routes>
     </BrowserRouter>
   )

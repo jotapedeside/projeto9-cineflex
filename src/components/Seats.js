@@ -1,14 +1,17 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { Link,useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Rodape from "./Rodape";
 
 export default function Seats() {
   const [sessionSeats, setSessionSeats] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]);
-  const {idSessao} = useParams();
+  const [name, setName] = useState([]);
+  const [cpf, setCpf] = useState([]);
 
+  const {idSessao} = useParams();
+  //Put LEGENDA DE ASSENTO below Session component
   useEffect(() => {
     const req = axios.get(`https://mock-api.driven.com.br/api/v7/cineflex/showtimes/${idSessao}/seats`);
     req.then(res => {
@@ -24,7 +27,15 @@ export default function Seats() {
         sessionSeats={sessionSeats.seats}
         selectedSeats={selectedSeats}
         setSelectedSeats={setSelectedSeats}/>
-
+      <ClientInfo
+        selectedSeats={selectedSeats}
+        setSelectedSeats={setSelectedSeats}
+        idSessao={idSessao}
+        name={name}
+        setName={setName}
+        cpf={cpf}
+        setCpf={setCpf}
+        sessionSeats={sessionSeats}/>
       <Rodape movieSchedule={sessionSeats.movie} sessionInfo={sessionSeats}/>
     </div>
     :
@@ -75,7 +86,7 @@ function Chairs({sessionSeats, available, setSelectedSeats, selectedSeats, seats
         setAvailability(sessionSeats);
         break;
       case false:
-        alert('Poltrona indisponível');
+        alert("Este assento está indisponível...");
         break;
       default:
         //id
@@ -83,23 +94,66 @@ function Chairs({sessionSeats, available, setSelectedSeats, selectedSeats, seats
         setAvailability(true)
         break;
     }
-    /*if (availability === false) {
-        alert('Poltrona indisponível');
-    } else if (availability === true) {
-        setAvailability(sessionSeats)
-        const selecionado = [...selectedSeats, seatsid]
-        setSelectedSeats(selecionado)
-    } else if (sessionSeats === id) {
-        setAvailability(true)
-        const selecionado = selectedSeats.filter(id => id !== seatsid)
-        setSelectedSeats(selecionado)
-    }*/
-}
+  }
 
   return (
     <Chair color={color} border={border} onClick={() => chairSelected(sessionSeats, seatsid)}>
       <p>{sessionSeats}</p>
     </Chair>
+  )
+}
+
+function ClientInfo({selectedSeats, setSelectedSeats, idSessao, name, setName, cpf, setCpf, sessionSeats}) {
+  //verificar se o nome e cpf estão preenchidos e se o cpf é valido (11 digitos) e se o nome tem pelo menos 2 letras
+  const ids = selectedSeats.map(i => Number(i));
+  let navigate = useNavigate();
+
+  function Submit(event) {
+    event.preventDefault();
+    if (validateForm()) {
+      
+      const objToPost = {
+        movieName: sessionSeats.movie.title,
+        movieDate: sessionSeats.day.date,
+        movieTime: sessionSeats.name,
+        ids: selectedSeats,
+        name: name,
+        cpf: cpf
+      }
+      console.log(objToPost);
+
+      const req = axios.post(`https://mock-api.driven.com.br/api/v7/cineflex/seats/book-many`, {
+        ids: selectedSeats,
+        name: name,
+        cpf: cpf
+      });
+
+      req.then(res => {
+        navigate("/sucesso", {state: {objToPost: objToPost}});
+        alert("Reserva realizada com sucesso!");
+      }).catch(err => {
+        alert("Erro ao realizar a reserva!");
+      });
+    } else {
+      alert("Preencha os campos corretamente!");
+    }
+  }
+
+  function validateForm() {
+    console.log("Validando");
+    return name.length > 1 && cpf.length === 11;
+  }
+
+  return (
+    <FormStyle>
+      <FormInfo>
+        <label >Nome do comprador:</label>
+        <input type="text" placeholder="Digite seu nome..." value={name} onChange={e => setName(e.target.value)}/>
+        <label >CPF do comprador:</label>
+        <input type="text" placeholder="Digite seu CPF..." value={cpf} onChange={e => setCpf(e.target.value)}/>
+      </FormInfo>
+      <button type="submit" onClick={Submit}>Reservar assento(s)</button>
+    </FormStyle>
   )
 }
 
@@ -113,7 +167,7 @@ const SeatsGrid = styled.div`
 `
 const Chair = styled.div`
     width: 26px;
-    height: 25px;
+    height: 26px;
     background: ${props => props.color};
     border: 1px solid ${props => props.border};
     border-radius: 12px;
@@ -124,8 +178,44 @@ const Chair = styled.div`
     cursor: pointer;
     p {
         font-size: 11px;
-        line-height: 13px;
-        letter-spacing: 0.04em;
-        color: #000000;
     }
+`
+
+const FormStyle = styled.form`
+  margin: 24px 24px;
+  padding: 0 10px;
+  font-size: 18px;
+  line-height: 21px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  button{
+    margin: 57px 0 147px 0;
+    width: 225px;
+    height: 42px;
+    border-radius: 3px;
+    color: #ffffff;
+    background: #E8833A;
+    border: none;
+    cursor: pointer;
+  }
+`
+
+const FormInfo = styled.div`
+  label{
+    color: #293845;
+    line-height: 30px;
+  }
+  input{
+    font-style: italic;
+    font-size: 18px;
+    color: #AFAFAF;
+    width: 327px;
+    height: 51px;
+    padding-left: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #D5D5D5;
+    border-radius: 3px;
+  }
 `
