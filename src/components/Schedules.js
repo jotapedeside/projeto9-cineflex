@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import Rodape from "./Rodape";
 
@@ -14,8 +14,6 @@ export default function Schedules({movieSchedule, setMovieSchedule}) {
       setMovieSchedule(res.data);
     });
   }, []);
-  console.log(movieSchedule.days);
-  console.log(movieSchedule);
   
   return(
     movieSchedule.days && movieSchedule.days.length > 0 ?
@@ -27,7 +25,7 @@ export default function Schedules({movieSchedule, setMovieSchedule}) {
       <Rodape movieSchedule={movieSchedule}/>
     </div>
     :
-    <> </>
+    <>Loading...</>
   )
 }
 
